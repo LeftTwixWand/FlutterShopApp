@@ -24,7 +24,7 @@ class ProductItem extends StatelessWidget {
             onPressed: () {},
           ),
           trailing: IconButton(
-            icon: Icon(Icons.favorite),
+            icon: Icon(Icons.shopping_cart),
             onPressed: () {},
           ),
         ),
