@@ -42,24 +42,10 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  var _showFavoritesOnly = false;
+  List<ProductProvider> get items => [..._items];
 
-  List<ProductProvider> get items {
-    if (_showFavoritesOnly) {
-      return _items.where((element) => element.isFavorite).toList();
-    }
-    return [..._items];
-  }
-
-  void showFavoritesOnly() {
-    _showFavoritesOnly = true;
-    notifyListeners();
-  }
-
-  void showAll() {
-    _showFavoritesOnly = false;
-    notifyListeners();
-  }
+  List<ProductProvider> get favoriteItems =>
+      _items.where((element) => element.isFavorite).toList();
 
   ProductProvider findById(String id) =>
       _items.firstWhere((element) => element.id == id);
