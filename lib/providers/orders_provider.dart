@@ -7,7 +7,7 @@ class OrdersProvider with ChangeNotifier {
 
   List<OrderModel> get orders => [..._orders];
 
-  void addOrderMethod(List<CartItemModel> cartProducts, double total) {
+  void addOrder(List<CartItemModel> cartProducts, double total) {
     _orders.insert(
       0,
       OrderModel(
