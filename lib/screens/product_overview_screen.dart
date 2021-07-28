@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import './cart_sсreen.dart';
 import '../widgets/products_grid.dart';
 import '../widgets/badge.dart';
-import '../providers/cart.dart';
+import '../providers/cart_provider.dart';
 
 enum FilterOptions {
   Favorites,
@@ -43,7 +43,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
               ),
             ],
           ),
-          Consumer<Cart>(
+          Consumer<CartProvider>(
             builder: (_, cart, ch) => Badge(
               child: ch ??
                   Container(
