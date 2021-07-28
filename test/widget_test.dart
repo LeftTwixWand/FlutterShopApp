@@ -5,14 +5,13 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter_test/flutter_test.dart';
-
-import 'package:meals_app/main.dart';
+// import 'package:flutter_test/flutter_test.dart';
+// import 'package:shop_app/widgets/cart_item.dart';
 
 void main() {
-  testWidgets('Simple test', (WidgetTester tester) async {
-    await tester.pumpWidget(MyApp());
+  // testWidgets('Simple test', (WidgetTester tester) async {
+  //   await tester.pumpWidget(CartItem('0', '0', 0, 0, '0'));
 
-    expect(find.text('1'), findsNothing);
-  });
+  //   expect(find.text('1'), findsNothing);
+  // });
 }
