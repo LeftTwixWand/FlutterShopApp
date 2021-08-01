@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import './product_provider.dart';
 
 class ProductsProvider with ChangeNotifier {
@@ -37,7 +39,31 @@ class ProductsProvider with ChangeNotifier {
     ),
   ];
 
+  List<ProductProvider> get items => [..._items];
+
+  List<ProductProvider> get favoriteItems =>
+      _items.where((element) => element.isFavorite).toList();
+
+  ProductProvider findById(String id) =>
+      _items.firstWhere((element) => element.id == id);
+
   void addProduct(ProductProvider product) {
+    final url = Uri.parse(
+        'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/products.json');
+
+    http.post(
+      url,
+      body: json.encode(
+        {
+          'title': product.title,
+          'description': product.description,
+          'imageUrl': product.imageUrl,
+          'price': product.price,
+          'isFavorite': product.isFavorite,
+        },
+      ),
+    );
+
     final newProduct = ProductProvider(
       id: DateTime.now().toString(),
       title: product.title,
@@ -47,17 +73,8 @@ class ProductsProvider with ChangeNotifier {
     );
 
     _items.add(newProduct);
-
     notifyListeners();
   }
-
-  List<ProductProvider> get items => [..._items];
-
-  List<ProductProvider> get favoriteItems =>
-      _items.where((element) => element.isFavorite).toList();
-
-  ProductProvider findById(String id) =>
-      _items.firstWhere((element) => element.id == id);
 
   void updateProduct(String id, ProductProvider newProduct) {
     final prodIndex = _items.indexWhere((element) => element.id == id);
