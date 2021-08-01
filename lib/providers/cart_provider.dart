@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:shop_app/widgets/cart_item.dart';
 import '../models/cart_item_model.dart';
 
 class CartProvider with ChangeNotifier {

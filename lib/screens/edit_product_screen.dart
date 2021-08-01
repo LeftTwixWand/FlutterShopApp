@@ -34,12 +34,19 @@ class _EditProductScreenState extends State<EditProductScreen> {
   }
 
   void _updateImageUrl() {
-    if (!_imageUrlFocusNode.hasFocus) {
-      setState(() {});
-    }
+    if (_imageUrlFocusNode.hasFocus) return;
+
+    if (_imageUrlController.text.isEmpty ||
+        !_imageUrlController.text.startsWith('http') &&
+            !_imageUrlController.text.startsWith('https')) return;
+
+    setState(() {});
   }
 
   void _saveForm() {
+    final isValid = _formKey.currentState?.validate();
+    if (isValid == null || !isValid) return;
+
     _formKey.currentState?.save();
   }
 
@@ -64,6 +71,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
               TextFormField(
                 decoration: InputDecoration(labelText: 'Title'),
                 textInputAction: TextInputAction.next,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please provide a valid value!';
+                  }
+
+                  return null;
+                },
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
                 },
@@ -82,6 +96,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.next,
                 focusNode: _priceFocusNode,
+                validator: (value) {
+                  if (value == null ||
+                      value.isEmpty ||
+                      double.tryParse(value) == null ||
+                      double.parse(value) <= 0) {
+                    return 'Please provide a valid value!';
+                  }
+
+                  return null;
+                },
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_descriptionFocusNode);
                 },
@@ -100,6 +124,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 maxLines: 3,
                 focusNode: _descriptionFocusNode,
                 keyboardType: TextInputType.multiline,
+                validator: (value) {
+                  if (value == null || value.isEmpty || value.length > 10) {
+                    return 'Please provide a valid value!';
+                  }
+
+                  return null;
+                },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -129,6 +160,16 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       decoration: InputDecoration(labelText: 'Image URL'),
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.done,
+                      validator: (value) {
+                        if (value == null ||
+                            value.isEmpty ||
+                            !value.startsWith('http') &&
+                                !value.startsWith('https')) {
+                          return 'Please provide a valid value!';
+                        }
+
+                        return null;
+                      },
                       controller: _imageUrlController,
                       focusNode: _imageUrlFocusNode,
                       onFieldSubmitted: (_) {
