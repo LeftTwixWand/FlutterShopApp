@@ -51,7 +51,8 @@ class ProductsProvider with ChangeNotifier {
     final url = Uri.parse(
         'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/products.json');
 
-    http.post(
+    http
+        .post(
       url,
       body: json.encode(
         {
@@ -62,18 +63,21 @@ class ProductsProvider with ChangeNotifier {
           'isFavorite': product.isFavorite,
         },
       ),
-    );
+    )
+        .then(
+      (response) {
+        final newProduct = ProductProvider(
+          id: json.decode(response.body)['name'],
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl,
+        );
 
-    final newProduct = ProductProvider(
-      id: DateTime.now().toString(),
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      imageUrl: product.imageUrl,
+        _items.add(newProduct);
+        notifyListeners();
+      },
     );
-
-    _items.add(newProduct);
-    notifyListeners();
   }
 
   void updateProduct(String id, ProductProvider newProduct) {
