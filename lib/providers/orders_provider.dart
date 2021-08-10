@@ -9,6 +9,37 @@ class OrdersProvider with ChangeNotifier {
 
   List<OrderModel> get orders => [..._orders];
 
+  Future<void> fetchAndsetOrders() async {
+    final url = Uri.parse(
+        'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/orders.json');
+
+    final response = await http.get(url);
+    final List<OrderModel> loadedOrders = [];
+    final extractedData = json.decode(response.body) as Map<String, dynamic>?;
+    extractedData?.forEach((key, value) {
+      loadedOrders.add(
+        OrderModel(
+          id: key,
+          amount: value['total'],
+          products: (value['products'] as List<dynamic>)
+              .map(
+                (item) => CartItemModel(
+                  id: item['id'],
+                  title: item['title'],
+                  quantity: item['quantity'],
+                  price: item['price'],
+                ),
+              )
+              .toList(),
+          dateTime: DateTime.parse(value['dateTime']),
+        ),
+      );
+    });
+
+    _orders = loadedOrders.reversed.toList();
+    notifyListeners();
+  }
+
   Future<void> addOrder(List<CartItemModel> cartProducts, double total) async {
     final url = Uri.parse(
         'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/orders.json');
