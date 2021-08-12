@@ -7,9 +7,10 @@ class AuthorizationProvider with ChangeNotifier {
   DateTime _expiryDate = DateTime.now();
   String _userId = '';
 
-  Future<void> signUp(String email, String password) async {
+  Future<void> _authorize(
+      String email, String password, String urlSegment) async {
     final url = Uri.parse(
-        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyCQ_2mJUvdnTCQXxBieZ5Lm-cPEJpS0wIs');
+        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/$urlSegment?key=AIzaSyCQ_2mJUvdnTCQXxBieZ5Lm-cPEJpS0wIs');
 
     final response = await http.post(
       url,
@@ -22,6 +23,12 @@ class AuthorizationProvider with ChangeNotifier {
       ),
     );
 
-    print(json.decode(response.body));
+    print(response.body);
   }
+
+  Future<void> signUp(String email, String password) async =>
+      _authorize(email, password, 'signupNewUser');
+
+  Future<void> logIn(String email, String password) async =>
+      _authorize(email, password, 'verifyPassword');
 }
