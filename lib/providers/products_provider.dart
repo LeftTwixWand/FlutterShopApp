@@ -116,7 +116,7 @@ class ProductsProvider with ChangeNotifier {
 
       notifyListeners();
 
-      throw HttpExceprion('Could not delete product.');
+      throw HttpException('Could not delete product.');
     }
 
     existingProduct.dispose();
