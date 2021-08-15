@@ -5,7 +5,17 @@ import '../models/http_exception.dart';
 import './product_provider.dart';
 
 class ProductsProvider with ChangeNotifier {
+  String _authToken = '';
+
   List<ProductProvider> _items = [];
+
+  ProductsProvider update(String authToken, List<ProductProvider> items) {
+    _authToken = authToken;
+    _items = items;
+    return this;
+  }
+
+  String get authToken => _authToken;
 
   List<ProductProvider> get items => [..._items];
 
@@ -51,7 +61,8 @@ class ProductsProvider with ChangeNotifier {
 
   Future<void> fetchAndSetProduct() async {
     final url = Uri.parse(
-        'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/products.json');
+        'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
+
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;

@@ -20,9 +20,6 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (ctx) => ProductsProvider(),
-        ),
-        ChangeNotifierProvider(
           create: (ctx) => CartProvider(),
         ),
         ChangeNotifierProvider(
@@ -30,6 +27,14 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (ctx) => AuthorizationProvider(),
+        ),
+        ChangeNotifierProxyProvider<AuthorizationProvider, ProductsProvider>(
+          create: (_) => ProductsProvider(),
+          update: (ctx, authorizationProvider, previousProductsState) =>
+              previousProductsState!.update(
+            authorizationProvider.token,
+            previousProductsState.items,
+          ),
         ),
       ],
       child: Consumer<AuthorizationProvider>(
