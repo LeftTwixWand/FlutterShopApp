@@ -8,6 +8,10 @@ class AuthorizationProvider with ChangeNotifier {
   DateTime _expiryDate = DateTime.now();
   String _userId = '';
 
+  String get token => _expiryDate.isAfter(DateTime.now()) ? _token : '';
+
+  bool get isAuth => token != '';
+
   Future<void> _authorize(
       String email, String password, String urlSegment) async {
     final url = Uri.parse(
@@ -28,7 +32,17 @@ class AuthorizationProvider with ChangeNotifier {
       if (responseData['error'] != null) {
         throw HttpException(responseData['error']!['message']);
       }
-      print(response.body);
+
+      _token = responseData['idToken'];
+      _userId = responseData['localId'];
+      _expiryDate = DateTime.now().add(
+        Duration(
+          seconds: int.parse(
+            responseData['expiresIn'],
+          ),
+        ),
+      );
+      notifyListeners();
     } catch (error) {
       throw error;
     }
