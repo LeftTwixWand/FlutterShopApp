@@ -27,7 +27,7 @@ class ProductsProvider with ChangeNotifier {
 
   Future<void> addProduct(ProductProvider product) async {
     final url = Uri.parse(
-        'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/products.json');
+        'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
 
     try {
       final response = await http.post(
@@ -93,7 +93,7 @@ class ProductsProvider with ChangeNotifier {
     if (prodIndex < 0) return;
 
     final url = Uri.parse(
-        'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
+        'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$authToken');
 
     await http.patch(
       url,
@@ -111,7 +111,7 @@ class ProductsProvider with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url = Uri.parse(
-        'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json');
+        'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$authToken');
 
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);
