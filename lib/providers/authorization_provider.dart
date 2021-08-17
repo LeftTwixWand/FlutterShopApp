@@ -9,7 +9,7 @@ class AuthorizationProvider with ChangeNotifier {
   String _userId = '';
 
   String get token => _expiryDate.isAfter(DateTime.now()) ? _token : '';
-
+  String get userId => _userId;
   bool get isAuth => token != '';
 
   Future<void> _authorize(

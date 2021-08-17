@@ -5,12 +5,14 @@ import '../models/http_exception.dart';
 import './product_provider.dart';
 
 class ProductsProvider with ChangeNotifier {
+  String _userId = '';
   String _authToken = '';
-
   List<ProductProvider> _items = [];
 
-  ProductsProvider update(String authToken, List<ProductProvider> items) {
+  ProductsProvider update(
+      String authToken, String userId, List<ProductProvider> items) {
     _authToken = authToken;
+    _userId = userId;
     _items = items;
     return this;
   }
@@ -38,7 +40,6 @@ class ProductsProvider with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
-            'isFavorite': product.isFavorite,
           },
         ),
       );
@@ -60,13 +61,20 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProduct() async {
-    final url = Uri.parse(
+    var url = Uri.parse(
         'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=$authToken');
 
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<ProductProvider> loadedProducts = [];
+
+      url = Uri.parse(
+          'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/userFavorites/$_userId.json?auth=$authToken');
+
+      final favoritesResponse = await http.get(url);
+      final favoriteData =
+          json.decode(favoritesResponse.body) as Map<String, dynamic>?;
 
       extractedData.forEach((key, value) {
         loadedProducts.add(
@@ -76,7 +84,8 @@ class ProductsProvider with ChangeNotifier {
             description: value['description'],
             price: value['price'],
             imageUrl: value['imageUrl'],
-            isFavorite: value['isFavorite'],
+            isFavorite:
+                favoriteData == null ? false : favoriteData[key] ?? false,
           ),
         );
       });

@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
           update: (ctx, authorizationProvider, previousProductsState) =>
               previousProductsState!.update(
             authorizationProvider.token,
+            authorizationProvider.userId,
             previousProductsState.items,
           ),
         ),
