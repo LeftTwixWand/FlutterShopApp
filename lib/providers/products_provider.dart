@@ -40,6 +40,7 @@ class ProductsProvider with ChangeNotifier {
             'description': product.description,
             'imageUrl': product.imageUrl,
             'price': product.price,
+            'creatorId': _userId,
           },
         ),
       );
