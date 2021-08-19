@@ -10,7 +10,7 @@ class UserProductsScreen extends StatelessWidget {
 
   Future<void> _refreshProducts(BuildContext context) async {
     await Provider.of<ProductsProvider>(context, listen: false)
-        .fetchAndSetProduct();
+        .fetchAndSetProduct(true);
   }
 
   @override
@@ -30,24 +30,34 @@ class UserProductsScreen extends StatelessWidget {
         ],
       ),
       drawer: AppDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () => _refreshProducts(context),
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: ListView.builder(
-            itemBuilder: (_, index) => Column(
-              children: [
-                UserProductItem(
-                  id: productsProvider.items[index].id,
-                  title: productsProvider.items[index].title,
-                  imageUrl: productsProvider.items[index].imageUrl,
+      body: FutureBuilder(
+        future: _refreshProducts(context),
+        builder: (ctx, snapshot) => snapshot.connectionState ==
+                ConnectionState.waiting
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : RefreshIndicator(
+                onRefresh: () => _refreshProducts(context),
+                child: Consumer<ProductsProvider>(
+                  builder: (ctx, productsData, _) => Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: ListView.builder(
+                      itemBuilder: (_, index) => Column(
+                        children: [
+                          UserProductItem(
+                            id: productsProvider.items[index].id,
+                            title: productsProvider.items[index].title,
+                            imageUrl: productsProvider.items[index].imageUrl,
+                          ),
+                          Divider(),
+                        ],
+                      ),
+                      itemCount: productsProvider.items.length,
+                    ),
+                  ),
                 ),
-                Divider(),
-              ],
-            ),
-            itemCount: productsProvider.items.length,
-          ),
-        ),
+              ),
       ),
     );
   }
