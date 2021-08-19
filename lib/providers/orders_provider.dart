@@ -6,11 +6,16 @@ import '../models/cart_item_model.dart';
 
 class OrdersProvider with ChangeNotifier {
   String _authToken = '';
-
+  String _userId = '';
   List<OrderModel> _orders = [];
 
-  OrdersProvider update(String authToken, List<OrderModel> orders) {
+  OrdersProvider update(
+    String authToken,
+    String userId,
+    List<OrderModel> orders,
+  ) {
     _authToken = authToken;
+    _userId = userId;
     _orders = orders;
 
     return this;
@@ -20,7 +25,7 @@ class OrdersProvider with ChangeNotifier {
 
   Future<void> fetchAndsetOrders() async {
     final url = Uri.parse(
-        'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/orders.json?auth=$_authToken');
+        'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/orders/$_userId.json?auth=$_authToken');
 
     final response = await http.get(url);
     final List<OrderModel> loadedOrders = [];
@@ -51,7 +56,7 @@ class OrdersProvider with ChangeNotifier {
 
   Future<void> addOrder(List<CartItemModel> cartProducts, double total) async {
     final url = Uri.parse(
-        'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/orders.json?auth=$_authToken');
+        'https://flutter-update-973d5-default-rtdb.europe-west1.firebasedatabase.app/orders/$_userId.json?auth=$_authToken');
 
     final timeStamp = DateTime.now();
 
