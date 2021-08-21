@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import '../models/http_exception.dart';
@@ -7,6 +8,7 @@ class AuthorizationProvider with ChangeNotifier {
   String _token = '';
   DateTime _expiryDate = DateTime.now();
   String _userId = '';
+  Timer? _authTimer;
 
   String get token => _expiryDate.isAfter(DateTime.now()) ? _token : '';
   String get userId => _userId;
@@ -42,6 +44,8 @@ class AuthorizationProvider with ChangeNotifier {
           ),
         ),
       );
+      _autoLogout();
+
       notifyListeners();
     } catch (error) {
       throw error;
@@ -53,4 +57,26 @@ class AuthorizationProvider with ChangeNotifier {
 
   Future<void> logIn(String email, String password) async =>
       _authorize(email, password, 'verifyPassword');
+
+  void _autoLogout() {
+    if (_authTimer != null) {
+      _authTimer?.cancel();
+    }
+
+    final timeToExpiry = _expiryDate.difference(DateTime.now()).inSeconds;
+    _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
+  }
+
+  void logout() {
+    _token = '';
+    _userId = '';
+    _expiryDate = DateTime.now();
+
+    if (_authTimer != null) {
+      _authTimer?.cancel();
+      _authTimer = null;
+    }
+
+    notifyListeners();
+  }
 }
